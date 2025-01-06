@@ -1,0 +1,33 @@
+# IntelliJ IDEA 설정 파일
+.idea/
+*.iml
+
+# OS에서 생성되는 파일
+.DS_Store
+Thumbs.db
+
+# 빌드 및 배포 파일
+target/
+out/
+build/
+dist/
+
+# Node.js 의존성 파일
+node_modules/
+
+# 환경 설정 파일 (민감 정보 포함 가능)
+.env
+.env.local
+
+# 로그 파일
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+
+# 특정 IDE 설정
+.vscode/
+*.classpath
+*.project
