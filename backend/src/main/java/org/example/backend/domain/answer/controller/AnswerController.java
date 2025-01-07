@@ -6,6 +6,8 @@ import org.example.backend.domain.answer.form.AnswerForm;
 import org.example.backend.domain.answer.service.AnswerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,5 +24,11 @@ public class AnswerController {
     public ResponseEntity<AnswerDto> createAnswer(@RequestBody AnswerForm answerForm) {
         AnswerDto answer = answerService.createAnswer(answerForm);
         return ResponseEntity.status(HttpStatus.CREATED).body(answer);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<AnswerDto> updateAnswer(@PathVariable("id") Long id, @RequestBody AnswerForm answerForm) {
+        AnswerDto answer = answerService.updateAnswer(id, answerForm);
+        return ResponseEntity.status(HttpStatus.OK).body(answer);
     }
 }

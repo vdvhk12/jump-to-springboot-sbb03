@@ -5,6 +5,7 @@ import static org.example.backend.domain.util.AnswerUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import org.example.backend.domain.answer.dto.AnswerDto;
 import org.example.backend.domain.answer.entity.Answer;
 import org.example.backend.domain.answer.form.AnswerForm;
@@ -42,5 +43,27 @@ class AnswerServiceTest {
         assertThat(result.getId()).isEqualTo(answer.getId());
         assertThat(result.getQuestionId()).isEqualTo(answer.getQuestionId());
         assertThat(result.getContent()).isEqualTo(answer.getContent());
+    }
+
+    @Test
+    @DisplayName("update answer")
+    void t2() {
+        //given
+        AnswerForm answerForm = createTestAnswerForm(1L, "content");
+        Answer answer = createTestAnswer(1L, answerForm);
+        when(answerRepository.findById(any(Long.class))).thenReturn(Optional.of(answer));
+
+        AnswerForm updateForm = createTestAnswerForm(1L, "update content");
+        Answer updatedAnswer = createTestAnswer(1L, updateForm);
+        when(answerRepository.save(any(Answer.class))).thenReturn(updatedAnswer);
+
+        //when
+        AnswerDto result = answerService.updateAnswer(answer.getId(), updateForm);
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(answer.getId());
+        assertThat(result.getQuestionId()).isEqualTo(updatedAnswer.getQuestionId());
+        assertThat(result.getContent()).isEqualTo(updatedAnswer.getContent());
     }
 }

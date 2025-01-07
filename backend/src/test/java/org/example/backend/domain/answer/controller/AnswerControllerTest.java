@@ -3,6 +3,7 @@ package org.example.backend.domain.answer.controller;
 import static org.example.backend.domain.util.AnswerUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,5 +55,32 @@ class AnswerControllerTest {
             .andExpect(jsonPath("$.id").value(answer.getId()))
             .andExpect(jsonPath("$.questionId").value(answer.getQuestionId()))
             .andExpect(jsonPath("$.content").value(answer.getContent()));
+    }
+
+    @Test
+    @DisplayName("PATCH /api/answer/{id}")
+    void t2() throws Exception {
+        //given
+        String url = "/api/answer/1";
+        AnswerForm answerForm = createTestAnswerForm(1L, "content");
+        AnswerForm updateForm = createTestAnswerForm(1L, "updated content");
+
+        Answer answer = createTestAnswer(1L, answerForm);
+        Answer updatedAnswer = updateTestAnswer(answer, updateForm);
+
+        AnswerDto answerDto = AnswerDto.fromEntity(updatedAnswer);
+        when(answerService.updateAnswer(any(Long.class), any(AnswerForm.class))).thenReturn(answerDto);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(patch(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(answerForm)));
+
+        //then
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(updatedAnswer.getId()))
+            .andExpect(jsonPath("$.questionId").value(updatedAnswer.getQuestionId()))
+            .andExpect(jsonPath("$.content").value(updatedAnswer.getContent()));
     }
 }

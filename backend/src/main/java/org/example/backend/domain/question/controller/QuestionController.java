@@ -1,6 +1,5 @@
 package org.example.backend.domain.question.controller;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.domain.question.dto.QuestionDto;
 import org.example.backend.domain.question.form.QuestionForm;

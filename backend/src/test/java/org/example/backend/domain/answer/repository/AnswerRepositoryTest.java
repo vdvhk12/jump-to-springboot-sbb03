@@ -3,8 +3,10 @@ package org.example.backend.domain.answer.repository;
 import static org.assertj.core.api.Assertions.*;
 import static org.example.backend.domain.util.AnswerUtils.*;
 
+import java.time.LocalDateTime;
 import org.example.backend.domain.answer.entity.Answer;
 import org.example.backend.domain.answer.form.AnswerForm;
+import org.example.backend.global.exception.DataNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +32,29 @@ class AnswerRepositoryTest {
         assertThat(result.getId()).isNotNull();
         assertThat(result.getQuestionId()).isEqualTo(1L);
         assertThat(result.getContent()).isEqualTo(answerForm.getContent());
+    }
+
+    @Test
+    @DisplayName("update answer")
+    void t2() {
+        //given
+        AnswerForm answerForm = createTestAnswerForm(1L, "content");
+        Answer answer = answerRepository.save(Answer.of(answerForm));
+
+        AnswerForm updateForm = createTestAnswerForm(1L, "update content");
+
+        //when
+        Answer result = answerRepository.findById(answer.getId()).map(q -> q.toBuilder()
+                .content(updateForm.getContent())
+                .updatedAt(LocalDateTime.now())
+                .build())
+            .orElseThrow(() -> new DataNotFoundException("Answer not found"));
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getQuestionId()).isEqualTo(1L);
+        assertThat(result.getContent()).isEqualTo(updateForm.getContent());
+        assertThat(result.getUpdatedAt()).isNotNull();
     }
 }
