@@ -22,4 +22,12 @@ public class QuestionUtils {
             .views(0)
             .build();
     }
+
+    public static Question updateTestQuestion(Question question, QuestionForm questionForm) {
+        return question.toBuilder()
+            .subject(questionForm.getSubject())
+            .content(questionForm.getContent())
+            .updatedAt(LocalDateTime.now())
+            .build();
+    }
 }

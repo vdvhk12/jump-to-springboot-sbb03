@@ -4,9 +4,11 @@ package org.example.backend.domain.question.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.example.backend.domain.question.util.QuestionUtils.createTestQuestion;
 import static org.example.backend.domain.question.util.QuestionUtils.createTestQuestionForm;
+import static org.example.backend.domain.question.util.QuestionUtils.updateTestQuestion;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import org.example.backend.domain.question.dto.QuestionDto;
 import org.example.backend.domain.question.entity.Question;
 import org.example.backend.domain.question.form.QuestionForm;
@@ -44,5 +46,29 @@ class QuestionServiceTest {
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getSubject()).isEqualTo(questionForm.getSubject());
         assertThat(result.getContent()).isEqualTo(questionForm.getContent());
+    }
+
+    @Test
+    @DisplayName("question update")
+    void t2() {
+        //given
+        QuestionForm createForm = createTestQuestionForm("test subject", "test content");
+        QuestionForm updateForm = createTestQuestionForm("update subject", "update content");
+
+        Question question = createTestQuestion(1L, createForm);
+        Question updateQuestion = updateTestQuestion(question, updateForm);
+
+        when(questionRepository.findById(any(Long.class))).thenReturn(Optional.of(question));
+        when(questionRepository.save(any(Question.class))).thenReturn(updateQuestion);
+
+        //when
+        QuestionDto result = questionService.updateQuestion(1L, updateForm);
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getSubject()).isEqualTo(updateForm.getSubject());
+        assertThat(result.getContent()).isEqualTo(updateForm.getContent());
+        assertThat(result.getUpdatedAt()).isNotNull();
     }
 }

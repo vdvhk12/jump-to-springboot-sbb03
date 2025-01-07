@@ -3,6 +3,7 @@ package org.example.backend.domain.question.controller;
 import static org.example.backend.domain.question.util.QuestionUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +30,7 @@ class QuestionControllerTest {
 
     @MockitoBean
     private QuestionService questionService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -51,6 +53,34 @@ class QuestionControllerTest {
         //then
         resultActions
             .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(questionDto.getId()))
+            .andExpect(jsonPath("$.subject").value(questionDto.getSubject()))
+            .andExpect(jsonPath("$.content").value(questionDto.getContent()));
+    }
+
+    @Test
+    @DisplayName("Patch /api/question/{id}")
+    void updateQuestion() throws Exception {
+        //given
+        String url = "/api/question/1";
+        QuestionForm questionForm = createTestQuestionForm("test subject", "test content");
+        QuestionForm updateForm = createTestQuestionForm("update subject", "update content");
+
+        Question question = createTestQuestion(1L, questionForm);
+        Question updateQuestion = updateTestQuestion(question, updateForm);
+
+        QuestionDto questionDto = QuestionDto.fromQuestion(updateQuestion);
+
+        when(questionService.updateQuestion(any(Long.class), any(QuestionForm.class))).thenReturn(questionDto);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(patch(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(questionForm)));
+
+        //then
+        resultActions
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(questionDto.getId()))
             .andExpect(jsonPath("$.subject").value(questionDto.getSubject()))
             .andExpect(jsonPath("$.content").value(questionDto.getContent()));
