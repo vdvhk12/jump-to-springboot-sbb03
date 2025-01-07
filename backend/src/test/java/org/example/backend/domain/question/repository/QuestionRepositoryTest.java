@@ -27,13 +27,13 @@ class QuestionRepositoryTest {
     private CategoryRepository categoryRepository;
 
     @Test
-    @DisplayName("question create")
+    @DisplayName("create question")
     void t1() {
         //given
         CategoryForm categoryForm = createTestCategoryForm("category");
         Category category = categoryRepository.save(Category.of(categoryForm));
 
-        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "subject", "content");
 
         //when
         Question result = questionRepository.save(Question.of(questionForm, category));
@@ -51,7 +51,7 @@ class QuestionRepositoryTest {
         CategoryForm categoryForm = createTestCategoryForm("category");
         Category category = categoryRepository.save(Category.of(categoryForm));
 
-        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "subject", "content");
         questionRepository.save(Question.of(questionForm, category));
         questionRepository.save(Question.of(questionForm, category));
 
@@ -79,7 +79,7 @@ class QuestionRepositoryTest {
         CategoryForm categoryForm = createTestCategoryForm("category");
         Category category = categoryRepository.save(Category.of(categoryForm));
 
-        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "subject", "content");
         Question question = questionRepository.save(Question.of(questionForm, category));
 
         //when
@@ -95,13 +95,13 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("question update")
+    @DisplayName("update question")
     void t4() {
         //given
         CategoryForm categoryForm = createTestCategoryForm("category");
         Category category = categoryRepository.save(Category.of(categoryForm));
 
-        QuestionForm createForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm createForm = createTestQuestionForm(category.getId(), "subject", "content");
         QuestionForm updateForm = createTestQuestionForm(category.getId(), "update subject", "update content");
         Question question = questionRepository.save(Question.of(createForm, category));
 
@@ -121,13 +121,13 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("question delete")
+    @DisplayName("delete question")
     void t5() {
         //given
         CategoryForm categoryForm = createTestCategoryForm("category");
         Category category = categoryRepository.save(Category.of(categoryForm));
 
-        QuestionForm createForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm createForm = createTestQuestionForm(category.getId(), "subject", "content");
         Question question = questionRepository.save(Question.of(createForm, category));
 
         //when

@@ -72,7 +72,7 @@ class QuestionServiceTest {
         Question question1 = createTestQuestion(1L, questionForm1, Category.fromDto(category));
 
         QuestionForm questionForm2 = createTestQuestionForm(category.getId(), "subject2", "content2");
-        Question question2 = createTestQuestion(1L, questionForm2, Category.fromDto(category));
+        Question question2 = createTestQuestion(2L, questionForm2, Category.fromDto(category));
 
         List<Question> questions = List.of(question1, question2);
         when(questionRepository.findAll()).thenReturn(questions);
@@ -129,7 +129,7 @@ class QuestionServiceTest {
         when(categoryService.getCategory(any(Long.class))).thenReturn(category);
 
 
-        QuestionForm createForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm createForm = createTestQuestionForm(category.getId(), "subject", "content");
         QuestionForm updateForm = createTestQuestionForm(category.getId(), "update subject", "update content");
 
         Question question = createTestQuestion(1L, createForm, Category.fromDto(category));
@@ -156,7 +156,7 @@ class QuestionServiceTest {
         CategoryForm categoryForm = createTestCategoryForm("category");
         Category category = createTestCategory(1L, categoryForm);
 
-        QuestionForm createForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm createForm = createTestQuestionForm(category.getId(), "subject", "content");
         Question question = createTestQuestion(1L, createForm, category);
 
         when(questionRepository.findById(any(Long.class))).thenReturn(Optional.of(question));
