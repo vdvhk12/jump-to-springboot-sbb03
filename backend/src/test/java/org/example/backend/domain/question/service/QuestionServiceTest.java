@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 import org.example.backend.domain.category.dto.CategoryDto;
 import org.example.backend.domain.category.entity.Category;
@@ -39,14 +40,14 @@ class QuestionServiceTest {
     private QuestionService questionService;
 
     @Test
-    @DisplayName("question create")
+    @DisplayName("create question")
     void t1() {
         //given
         CategoryForm categoryForm = createTestCategoryForm("category");
         CategoryDto category = CategoryDto.fromCategory(createTestCategory(1L, categoryForm));
         when(categoryService.getCategory(any(Long.class))).thenReturn(category);
 
-        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "subject", "content");
         Question question = createTestQuestion(1L, questionForm, Category.fromDto(category));
         when(questionRepository.save(any(Question.class))).thenReturn(question);
 
@@ -61,8 +62,67 @@ class QuestionServiceTest {
     }
 
     @Test
-    @DisplayName("question update")
+    @DisplayName("get questions")
     void t2() {
+        //given
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        CategoryDto category = CategoryDto.fromCategory(createTestCategory(1L, categoryForm));
+
+        QuestionForm questionForm1 = createTestQuestionForm(category.getId(), "subject1", "content1");
+        Question question1 = createTestQuestion(1L, questionForm1, Category.fromDto(category));
+
+        QuestionForm questionForm2 = createTestQuestionForm(category.getId(), "subject2", "content2");
+        Question question2 = createTestQuestion(1L, questionForm2, Category.fromDto(category));
+
+        List<Question> questions = List.of(question1, question2);
+        when(questionRepository.findAll()).thenReturn(questions);
+
+        //when
+        List<QuestionDto> result = questionService.getAllQuestions();
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result.getFirst().getCategory()).isInstanceOf(CategoryDto.class);
+        assertThat(result.getFirst().getCategory().getId()).isEqualTo(category.getId());
+        assertThat(result.getFirst().getSubject()).isEqualTo(questionForm1.getSubject());
+        assertThat(result.getFirst().getContent()).isEqualTo(questionForm1.getContent());
+        assertThat(result.getFirst().getCreatedAt()).isNotNull();
+
+        assertThat(result.getLast().getCategory()).isInstanceOf(CategoryDto.class);
+        assertThat(result.getLast().getCategory().getId()).isEqualTo(category.getId());
+        assertThat(result.getLast().getSubject()).isEqualTo(questionForm2.getSubject());
+        assertThat(result.getLast().getContent()).isEqualTo(questionForm2.getContent());
+        assertThat(result.getLast().getCreatedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("get question")
+    void t3() {
+        //given
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        CategoryDto category = CategoryDto.fromCategory(createTestCategory(1L, categoryForm));
+
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "subject", "content");
+        Question question = createTestQuestion(1L, questionForm, Category.fromDto(category));
+
+        when(questionRepository.findById(any(Long.class))).thenReturn(Optional.of(question));
+
+        //when
+        QuestionDto result = questionService.getQuestion(question.getId());
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getCategory()).isInstanceOf(CategoryDto.class);
+        assertThat(result.getCategory().getId()).isEqualTo(category.getId());
+        assertThat(result.getSubject()).isEqualTo(questionForm.getSubject());
+        assertThat(result.getContent()).isEqualTo(questionForm.getContent());
+        assertThat(result.getCreatedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("update question")
+    void t4() {
         //given
         CategoryForm categoryForm = createTestCategoryForm("category");
         CategoryDto category = CategoryDto.fromCategory(createTestCategory(1L, categoryForm));
@@ -90,8 +150,8 @@ class QuestionServiceTest {
     }
 
     @Test
-    @DisplayName("question delete")
-    void t3() {
+    @DisplayName("delete question")
+    void t5() {
         //given
         CategoryForm categoryForm = createTestCategoryForm("category");
         Category category = createTestCategory(1L, categoryForm);
