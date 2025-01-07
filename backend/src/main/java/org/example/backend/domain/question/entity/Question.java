@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.backend.domain.question.form.QuestionCreateForm;
+import org.example.backend.domain.question.form.QuestionForm;
 
 @Entity
 @Getter
@@ -36,10 +36,10 @@ public class Question {
 
     private int views;
 
-    public static Question of(QuestionCreateForm questionCreateForm) {
+    public static Question of(QuestionForm questionForm) {
         return Question.builder()
-            .subject(questionCreateForm.getSubject())
-            .content(questionCreateForm.getContent())
+            .subject(questionForm.getSubject())
+            .content(questionForm.getContent())
             .createdAt(LocalDateTime.now())
             .views(0)
             .build();

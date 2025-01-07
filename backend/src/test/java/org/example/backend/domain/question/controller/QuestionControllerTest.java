@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.backend.domain.question.dto.QuestionDto;
 import org.example.backend.domain.question.entity.Question;
-import org.example.backend.domain.question.form.QuestionCreateForm;
+import org.example.backend.domain.question.form.QuestionForm;
 import org.example.backend.domain.question.service.QuestionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,16 +37,16 @@ class QuestionControllerTest {
     void createQuestion() throws Exception {
         //given
         String url = "/api/question/create";
-        QuestionCreateForm questionCreateForm = createTestQuestionForm("test subject", "test content");
-        Question question = createTestQuestion(1L, questionCreateForm);
+        QuestionForm questionForm = createTestQuestionForm("test subject", "test content");
+        Question question = createTestQuestion(1L, questionForm);
         QuestionDto questionDto = QuestionDto.fromQuestion(question);
 
-        when(questionService.createQuestion(any(QuestionCreateForm.class))).thenReturn(questionDto);
+        when(questionService.createQuestion(any(QuestionForm.class))).thenReturn(questionDto);
 
         //when
         ResultActions resultActions = mockMvc.perform(post(url)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(questionCreateForm)));
+            .content(objectMapper.writeValueAsString(questionForm)));
 
         //then
         resultActions

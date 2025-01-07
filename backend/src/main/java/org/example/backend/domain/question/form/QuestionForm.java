@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class QuestionCreateForm {
+public class QuestionForm {
 
     private String subject;
     private String content;

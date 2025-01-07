@@ -2,7 +2,7 @@ package org.example.backend.domain.question.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.backend.domain.question.dto.QuestionDto;
-import org.example.backend.domain.question.form.QuestionCreateForm;
+import org.example.backend.domain.question.form.QuestionForm;
 import org.example.backend.domain.question.service.QuestionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/create")
-    public ResponseEntity<QuestionDto> createQuestion(@RequestBody QuestionCreateForm questionCreateForm) {
-        QuestionDto questionDto = questionService.createQuestion(questionCreateForm);
+    public ResponseEntity<QuestionDto> createQuestion(@RequestBody QuestionForm questionForm) {
+        QuestionDto questionDto = questionService.createQuestion(questionForm);
         return ResponseEntity.status(HttpStatus.CREATED).body(questionDto);
     }
 

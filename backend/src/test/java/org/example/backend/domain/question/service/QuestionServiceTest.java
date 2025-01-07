@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import org.example.backend.domain.question.dto.QuestionDto;
 import org.example.backend.domain.question.entity.Question;
-import org.example.backend.domain.question.form.QuestionCreateForm;
+import org.example.backend.domain.question.form.QuestionForm;
 import org.example.backend.domain.question.repository.QuestionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,18 +31,18 @@ class QuestionServiceTest {
     @DisplayName("question create")
     void t1() {
         //given
-        QuestionCreateForm questionCreateForm = createTestQuestionForm("test subject", "test content");
-        Question question = createTestQuestion(1L, questionCreateForm);
+        QuestionForm questionForm = createTestQuestionForm("test subject", "test content");
+        Question question = createTestQuestion(1L, questionForm);
 
         when(questionRepository.save(any(Question.class))).thenReturn(question);
 
         //when
-        QuestionDto result = questionService.createQuestion(questionCreateForm);
+        QuestionDto result = questionService.createQuestion(questionForm);
 
         //then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getSubject()).isEqualTo(questionCreateForm.getSubject());
-        assertThat(result.getContent()).isEqualTo(questionCreateForm.getContent());
+        assertThat(result.getSubject()).isEqualTo(questionForm.getSubject());
+        assertThat(result.getContent()).isEqualTo(questionForm.getContent());
     }
 }
