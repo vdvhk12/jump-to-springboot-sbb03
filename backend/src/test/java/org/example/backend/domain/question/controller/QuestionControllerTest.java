@@ -90,7 +90,7 @@ class QuestionControllerTest {
     }
 
     @Test
-    @DisplayName("Delete /api/question/{id}")
+    @DisplayName("DELETE /api/question/{id}")
     void deleteQuestion() throws Exception {
         //given
         String url = "/api/question/1";

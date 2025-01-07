@@ -3,6 +3,8 @@ package org.example.backend.domain.category.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.example.backend.domain.util.CategoryUtils.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -58,11 +60,27 @@ class CategoryServiceTest {
         when(categoryRepository.save(any(Category.class))).thenReturn(updateCategory);
 
         //when
-        CategoryDto result = categoryService.updateCategory(category.getId(), createForm);
+        CategoryDto result = categoryService.updateCategory(category.getId(), updateForm);
 
         //then
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo(updateForm.getName());
+    }
+
+    @Test
+    @DisplayName("category delete")
+    void t3() {
+        //given
+        CategoryForm createForm = createTestCategoryForm("category1");
+        Category category = createTestCategory(1L, createForm);
+
+        when(categoryRepository.findById(any(Long.class))).thenReturn(Optional.of(category));
+
+        //when
+        categoryService.deleteCategory(category.getId());
+
+        //then
+        verify(categoryRepository, times(1)).delete(category);
     }
 
 }

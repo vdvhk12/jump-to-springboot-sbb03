@@ -27,6 +27,11 @@ public class CategoryService {
             .build()));
     }
 
+    public void deleteCategory(Long categoryId) {
+        Category category = getCategoryOrThrow(categoryId);
+        categoryRepository.delete(category);
+    }
+
     private Category getCategoryOrThrow(Long categoryId) {
         return categoryRepository.findById(categoryId)
             .orElseThrow(() -> new DataNotFoundException("Category not found"));
