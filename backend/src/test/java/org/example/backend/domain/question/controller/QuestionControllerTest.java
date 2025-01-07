@@ -18,7 +18,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.form.CategoryForm;
-import org.example.backend.domain.question.dto.QuestionDto;
+import org.example.backend.domain.question.dto.QuestionDetailDto;
+import org.example.backend.domain.question.dto.QuestionListDto;
 import org.example.backend.domain.question.entity.Question;
 import org.example.backend.domain.question.form.QuestionForm;
 import org.example.backend.domain.question.service.QuestionService;
@@ -56,9 +57,9 @@ class QuestionControllerTest {
 
         QuestionForm questionForm = createTestQuestionForm(category.getId(), "subject", "content");
         Question question = createTestQuestion(1L, questionForm, category);
-        QuestionDto questionDto = QuestionDto.fromQuestion(question);
+        QuestionDetailDto questionDetailDto = QuestionDetailDto.fromEntity(question);
 
-        when(questionService.createQuestion(any(QuestionForm.class))).thenReturn(questionDto);
+        when(questionService.createQuestion(any(QuestionForm.class))).thenReturn(questionDetailDto);
 
         //when
         ResultActions resultActions = mockMvc.perform(post(url)
@@ -68,9 +69,9 @@ class QuestionControllerTest {
         //then
         resultActions
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.id").value(questionDto.getId()))
-            .andExpect(jsonPath("$.subject").value(questionDto.getSubject()))
-            .andExpect(jsonPath("$.content").value(questionDto.getContent()));
+            .andExpect(jsonPath("$.id").value(questionDetailDto.getId()))
+            .andExpect(jsonPath("$.subject").value(questionDetailDto.getSubject()))
+            .andExpect(jsonPath("$.content").value(questionDetailDto.getContent()));
     }
 
     @Test
@@ -83,15 +84,15 @@ class QuestionControllerTest {
 
         QuestionForm questionForm1 = createTestQuestionForm(category.getId(), "subject1", "content1");
         Question question1 = createTestQuestion(1L, questionForm1, category);
-        QuestionDto questionDto1 = QuestionDto.fromQuestion(question1);
+        QuestionListDto questionListDto1 = QuestionListDto.fromEntity(question1);
 
         QuestionForm questionForm2 = createTestQuestionForm(category.getId(), "subject2", "content2");
         Question question2 = createTestQuestion(2L, questionForm2, category);
-        QuestionDto questionDto2 = QuestionDto.fromQuestion(question2);
+        QuestionListDto questionListDto2 = QuestionListDto.fromEntity(question2);
 
-        List<QuestionDto> questions = List.of(questionDto1, questionDto2);
+        List<QuestionListDto> questions = List.of(questionListDto1, questionListDto2);
         PageRequest pageRequest = PageRequest.of(0, 10);
-        Page<QuestionDto> questionPage = new PageImpl<>(questions, pageRequest, questions.size());
+        Page<QuestionListDto> questionPage = new PageImpl<>(questions, pageRequest, questions.size());
 
         when(questionService.getAllQuestions(1)).thenReturn(questionPage);
 
@@ -106,17 +107,17 @@ class QuestionControllerTest {
             .andExpect(jsonPath("$.number").value(0)) // Current page
             .andExpect(jsonPath("$.size").value(10)) // Page size
 
-            .andExpect(jsonPath("$.content[0].id").value(questionDto1.getId()))
+            .andExpect(jsonPath("$.content[0].id").value(questionListDto1.getId()))
             .andExpect(jsonPath("$.content[0].category.id").value(category.getId()))
             .andExpect(jsonPath("$.content[0].category.name").value(category.getName()))
-            .andExpect(jsonPath("$.content[0].subject").value(questionDto1.getSubject()))
-            .andExpect(jsonPath("$.content[0].content").value(questionDto1.getContent()))
+            .andExpect(jsonPath("$.content[0].subject").value(questionListDto1.getSubject()))
+            .andExpect(jsonPath("$.content[0].content").value(questionListDto1.getContent()))
 
-            .andExpect(jsonPath("$.content[1].id").value(questionDto2.getId()))
+            .andExpect(jsonPath("$.content[1].id").value(questionListDto2.getId()))
             .andExpect(jsonPath("$.content[1].category.id").value(category.getId()))
             .andExpect(jsonPath("$.content[1].category.name").value(category.getName()))
-            .andExpect(jsonPath("$.content[1].subject").value(questionDto2.getSubject()))
-            .andExpect(jsonPath("$.content[1].content").value(questionDto2.getContent()));
+            .andExpect(jsonPath("$.content[1].subject").value(questionListDto2.getSubject()))
+            .andExpect(jsonPath("$.content[1].content").value(questionListDto2.getContent()));
     }
 
     @Test
@@ -130,8 +131,8 @@ class QuestionControllerTest {
         QuestionForm questionForm = createTestQuestionForm(category.getId(), "subject", "content");
         Question question = createTestQuestion(1L, questionForm, category);
 
-        QuestionDto questionDto = QuestionDto.fromQuestion(question);
-        when(questionService.getQuestion(questionDto.getId())).thenReturn(questionDto);
+        QuestionDetailDto questionDetailDto = QuestionDetailDto.fromEntity(question);
+        when(questionService.getQuestion(questionDetailDto.getId())).thenReturn(questionDetailDto);
 
         //when
         ResultActions resultActions = mockMvc.perform(get(url));
@@ -139,7 +140,7 @@ class QuestionControllerTest {
         //then
         resultActions
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(questionDto.getId()))
+            .andExpect(jsonPath("$.id").value(questionDetailDto.getId()))
             .andExpect(jsonPath("$.category.id").value(category.getId()))
             .andExpect(jsonPath("$.category.name").value(category.getName()))
             .andExpect(jsonPath("$.subject").value(question.getSubject()))
@@ -160,8 +161,9 @@ class QuestionControllerTest {
         Question question = createTestQuestion(1L, questionForm, category);
         Question updateQuestion = updateTestQuestion(question, updateForm, category);
 
-        QuestionDto questionDto = QuestionDto.fromQuestion(updateQuestion);
-        when(questionService.updateQuestion(any(Long.class), any(QuestionForm.class))).thenReturn(questionDto);
+        QuestionDetailDto questionDetailDto = QuestionDetailDto.fromEntity(updateQuestion);
+        when(questionService.updateQuestion(any(Long.class), any(QuestionForm.class))).thenReturn(
+            questionDetailDto);
 
         //when
         ResultActions resultActions = mockMvc.perform(patch(url)
@@ -171,9 +173,9 @@ class QuestionControllerTest {
         //then
         resultActions
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(questionDto.getId()))
-            .andExpect(jsonPath("$.subject").value(questionDto.getSubject()))
-            .andExpect(jsonPath("$.content").value(questionDto.getContent()));
+            .andExpect(jsonPath("$.id").value(questionDetailDto.getId()))
+            .andExpect(jsonPath("$.subject").value(questionDetailDto.getSubject()))
+            .andExpect(jsonPath("$.content").value(questionDetailDto.getContent()));
     }
 
     @Test

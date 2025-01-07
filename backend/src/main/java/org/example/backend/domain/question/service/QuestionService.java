@@ -6,7 +6,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.service.CategoryService;
-import org.example.backend.domain.question.dto.QuestionDto;
+import org.example.backend.domain.question.dto.QuestionDetailDto;
+import org.example.backend.domain.question.dto.QuestionListDto;
 import org.example.backend.domain.question.entity.Question;
 import org.example.backend.domain.question.form.QuestionForm;
 import org.example.backend.domain.question.repository.QuestionRepository;
@@ -25,26 +26,26 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final CategoryService categoryService;
 
-    public QuestionDto createQuestion(QuestionForm questionForm) {
+    public QuestionDetailDto createQuestion(QuestionForm questionForm) {
         Category category = Category.fromDto(categoryService.getCategory(questionForm.getCategoryId()));
-        return QuestionDto.fromQuestion(questionRepository.save(Question.of(questionForm, category)));
+        return QuestionDetailDto.fromEntity(questionRepository.save(Question.of(questionForm, category)));
     }
 
-    public Page<QuestionDto> getAllQuestions(int page) {
+    public Page<QuestionListDto> getAllQuestions(int page) {
         List<Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt"));
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(sorts));
-        return questionRepository.findAll(pageable).map(QuestionDto::fromQuestion);
+        return questionRepository.findAll(pageable).map(QuestionListDto::fromEntity);
     }
 
-    public QuestionDto getQuestion(Long questionId) {
-        return QuestionDto.fromQuestion(getQuestionOrThrow(questionId));
+    public QuestionDetailDto getQuestion(Long questionId) {
+        return QuestionDetailDto.fromEntity(getQuestionOrThrow(questionId));
     }
 
-    public QuestionDto updateQuestion(Long questionId, QuestionForm questionForm) {
+    public QuestionDetailDto updateQuestion(Long questionId, QuestionForm questionForm) {
         Category category = Category.fromDto(categoryService.getCategory(questionForm.getCategoryId()));
         Question question = getQuestionOrThrow(questionId);
-        return QuestionDto.fromQuestion(questionRepository.save(question.toBuilder()
+        return QuestionDetailDto.fromEntity(questionRepository.save(question.toBuilder()
             .category(category)
             .subject(questionForm.getSubject())
             .content(questionForm.getContent())

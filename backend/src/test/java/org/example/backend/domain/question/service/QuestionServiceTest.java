@@ -16,7 +16,8 @@ import org.example.backend.domain.category.dto.CategoryDto;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.form.CategoryForm;
 import org.example.backend.domain.category.service.CategoryService;
-import org.example.backend.domain.question.dto.QuestionDto;
+import org.example.backend.domain.question.dto.QuestionDetailDto;
+import org.example.backend.domain.question.dto.QuestionListDto;
 import org.example.backend.domain.question.entity.Question;
 import org.example.backend.domain.question.form.QuestionForm;
 import org.example.backend.domain.question.repository.QuestionRepository;
@@ -58,7 +59,7 @@ class QuestionServiceTest {
         when(questionRepository.save(any(Question.class))).thenReturn(question);
 
         //when
-        QuestionDto result = questionService.createQuestion(questionForm);
+        QuestionDetailDto result = questionService.createQuestion(questionForm);
 
         //then
         assertThat(result).isNotNull();
@@ -87,7 +88,7 @@ class QuestionServiceTest {
         when(questionRepository.findAll(pageable)).thenReturn(questionPage);
 
         //when
-        Page<QuestionDto> result = questionService.getAllQuestions(1);
+        Page<QuestionListDto> result = questionService.getAllQuestions(1);
 
         //then
         assertThat(result).isNotNull();
@@ -122,7 +123,7 @@ class QuestionServiceTest {
         when(questionRepository.findById(any(Long.class))).thenReturn(Optional.of(question));
 
         //when
-        QuestionDto result = questionService.getQuestion(question.getId());
+        QuestionDetailDto result = questionService.getQuestion(question.getId());
 
         //then
         assertThat(result).isNotNull();
@@ -152,7 +153,7 @@ class QuestionServiceTest {
         when(questionRepository.save(any(Question.class))).thenReturn(updateQuestion);
 
         //when
-        QuestionDto result = questionService.updateQuestion(question.getId(), updateForm);
+        QuestionDetailDto result = questionService.updateQuestion(question.getId(), updateForm);
 
         //then
         assertThat(result).isNotNull();

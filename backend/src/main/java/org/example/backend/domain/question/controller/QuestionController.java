@@ -1,7 +1,8 @@
 package org.example.backend.domain.question.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.backend.domain.question.dto.QuestionDto;
+import org.example.backend.domain.question.dto.QuestionDetailDto;
+import org.example.backend.domain.question.dto.QuestionListDto;
 import org.example.backend.domain.question.form.QuestionForm;
 import org.example.backend.domain.question.service.QuestionService;
 import org.springframework.data.domain.Page;
@@ -25,28 +26,28 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/create")
-    public ResponseEntity<QuestionDto> createQuestion(@RequestBody QuestionForm questionForm) {
-        QuestionDto questionDto = questionService.createQuestion(questionForm);
-        return ResponseEntity.status(HttpStatus.CREATED).body(questionDto);
+    public ResponseEntity<QuestionDetailDto> createQuestion(@RequestBody QuestionForm questionForm) {
+        QuestionDetailDto questionDetailDto = questionService.createQuestion(questionForm);
+        return ResponseEntity.status(HttpStatus.CREATED).body(questionDetailDto);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Page<QuestionDto>> getQuestions(
+    public ResponseEntity<Page<QuestionListDto>> getQuestions(
         @RequestParam(value = "page", defaultValue = "1") int page) {
-        Page<QuestionDto> questions = questionService.getAllQuestions(page);
+        Page<QuestionListDto> questions = questionService.getAllQuestions(page);
         return ResponseEntity.status(HttpStatus.OK).body(questions);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuestionDto> getQuestion(@PathVariable Long id) {
-        QuestionDto questionDto = questionService.getQuestion(id);
-        return ResponseEntity.status(HttpStatus.OK).body(questionDto);
+    public ResponseEntity<QuestionDetailDto> getQuestion(@PathVariable Long id) {
+        QuestionDetailDto questionDetailDto = questionService.getQuestion(id);
+        return ResponseEntity.status(HttpStatus.OK).body(questionDetailDto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<QuestionDto> updateQuestion(@PathVariable("id") Long id, @RequestBody QuestionForm questionForm) {
-        QuestionDto questionDto = questionService.updateQuestion(id, questionForm);
-        return ResponseEntity.status(HttpStatus.OK).body(questionDto);
+    public ResponseEntity<QuestionDetailDto> updateQuestion(@PathVariable("id") Long id, @RequestBody QuestionForm questionForm) {
+        QuestionDetailDto questionDetailDto = questionService.updateQuestion(id, questionForm);
+        return ResponseEntity.status(HttpStatus.OK).body(questionDetailDto);
     }
 
     @DeleteMapping("/{id}")
