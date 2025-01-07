@@ -24,6 +24,11 @@ public class CategoryService {
         return categoryRepository.findAll().stream().map(CategoryDto::fromCategory).toList();
     }
 
+    public CategoryDto getCategory(Long categoryId) {
+        return CategoryDto.fromCategory(categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new DataNotFoundException("Category not found")));
+    }
+
     public CategoryDto updateCategory(Long categoryId, CategoryForm categoryForm) {
         Category category = getCategoryOrThrow(categoryId);
         return CategoryDto.fromCategory(categoryRepository.save(category.toBuilder()

@@ -2,10 +2,8 @@ package org.example.backend.domain.category.repository;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.example.backend.domain.util.CategoryUtils.*;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
-import org.example.backend.domain.category.dto.CategoryDto;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.form.CategoryForm;
 import org.example.backend.global.exception.DataNotFoundException;
@@ -60,8 +58,8 @@ class CategoryRepositoryTest {
 
         //then
         assertThatThrownBy(() -> categoryRepository.findById(category.getId())
-            .orElseThrow(() -> new DataNotFoundException("Question not found")))
-            .isInstanceOf(DataNotFoundException.class).hasMessageContaining("Question not found");
+            .orElseThrow(() -> new DataNotFoundException("Category not found")))
+            .isInstanceOf(DataNotFoundException.class).hasMessageContaining("Category not found");
     }
 
     @Test
@@ -71,8 +69,8 @@ class CategoryRepositoryTest {
         CategoryForm categoryFrom = createTestCategoryForm("test category1");
         CategoryForm categoryFrom2 = createTestCategoryForm("test category2");
 
-        Category category = categoryRepository.save(Category.of(categoryFrom));
-        Category category2 = categoryRepository.save(Category.of(categoryFrom2));
+        categoryRepository.save(Category.of(categoryFrom));
+        categoryRepository.save(Category.of(categoryFrom2));
 
         //when
         List<Category> result = categoryRepository.findAll();
@@ -83,5 +81,21 @@ class CategoryRepositoryTest {
         assertThat(result.get(1).getName()).isEqualTo(categoryFrom2.getName());
     }
 
+    @Test
+    @DisplayName("get category")
+    void t5() {
+        //given
+        CategoryForm categoryFrom = createTestCategoryForm("test category1");
+        Category category = categoryRepository.save(Category.of(categoryFrom));
+
+        //when
+        Category result = categoryRepository.findById(category.getId())
+            .orElseThrow(() -> new DataNotFoundException("Category not found"));
+
+        //then
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isEqualTo(category.getId());
+        assertThat(result.getName()).isEqualTo(categoryFrom.getName());
+    }
 
 }

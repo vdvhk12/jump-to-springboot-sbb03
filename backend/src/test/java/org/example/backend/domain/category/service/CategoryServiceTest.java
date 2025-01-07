@@ -110,4 +110,23 @@ class CategoryServiceTest {
         assertThat(result.get(1)).isInstanceOf(CategoryDto.class);
     }
 
+    @Test
+    @DisplayName("get category")
+    void t5() {
+        //given
+        CategoryForm categoryFrom = createTestCategoryForm("test category1");
+        Category category = createTestCategory(1L, categoryFrom);
+
+        when(categoryRepository.findById(any(Long.class))).thenReturn(Optional.of(category));
+
+        //when
+        CategoryDto result = categoryService.getCategory(category.getId());
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(category.getId());
+        assertThat(result.getName()).isEqualTo(category.getName());
+        assertThat(result).isInstanceOf(CategoryDto.class);
+    }
+
 }
