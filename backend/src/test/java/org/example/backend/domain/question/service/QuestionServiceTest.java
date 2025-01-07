@@ -26,6 +26,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 @ExtendWith(MockitoExtension.class)
 class QuestionServiceTest {
@@ -75,25 +81,32 @@ class QuestionServiceTest {
         Question question2 = createTestQuestion(2L, questionForm2, Category.fromDto(category));
 
         List<Question> questions = List.of(question1, question2);
-        when(questionRepository.findAll()).thenReturn(questions);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Direction.DESC, "createdAt"));
+        Page<Question> questionPage = new PageImpl<>(questions, pageable, questions.size());
+
+        when(questionRepository.findAll(pageable)).thenReturn(questionPage);
 
         //when
-        List<QuestionDto> result = questionService.getAllQuestions();
+        Page<QuestionDto> result = questionService.getAllQuestions(1);
 
         //then
         assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(2);
-        assertThat(result.getFirst().getCategory()).isInstanceOf(CategoryDto.class);
-        assertThat(result.getFirst().getCategory().getId()).isEqualTo(category.getId());
-        assertThat(result.getFirst().getSubject()).isEqualTo(questionForm1.getSubject());
-        assertThat(result.getFirst().getContent()).isEqualTo(questionForm1.getContent());
-        assertThat(result.getFirst().getCreatedAt()).isNotNull();
+        assertThat(result.getTotalElements()).isEqualTo(2);
+        assertThat(result.getTotalPages()).isEqualTo(1);
+        assertThat(result.getNumber()).isEqualTo(0);
+        assertThat(result.getSize()).isEqualTo(10);
 
-        assertThat(result.getLast().getCategory()).isInstanceOf(CategoryDto.class);
-        assertThat(result.getLast().getCategory().getId()).isEqualTo(category.getId());
-        assertThat(result.getLast().getSubject()).isEqualTo(questionForm2.getSubject());
-        assertThat(result.getLast().getContent()).isEqualTo(questionForm2.getContent());
-        assertThat(result.getLast().getCreatedAt()).isNotNull();
+        assertThat(result.getContent().getFirst().getCategory()).isInstanceOf(CategoryDto.class);
+        assertThat(result.getContent().getFirst().getCategory().getId()).isEqualTo(category.getId());
+        assertThat(result.getContent().getFirst().getSubject()).isEqualTo(questionForm1.getSubject());
+        assertThat(result.getContent().getFirst().getContent()).isEqualTo(questionForm1.getContent());
+        assertThat(result.getContent().getFirst().getCreatedAt()).isNotNull();
+
+        assertThat(result.getContent().get(1).getCategory()).isInstanceOf(CategoryDto.class);
+        assertThat(result.getContent().get(1).getCategory().getId()).isEqualTo(category.getId());
+        assertThat(result.getContent().get(1).getSubject()).isEqualTo(questionForm2.getSubject());
+        assertThat(result.getContent().get(1).getContent()).isEqualTo(questionForm2.getContent());
+        assertThat(result.getContent().get(1).getCreatedAt()).isNotNull();
     }
 
     @Test

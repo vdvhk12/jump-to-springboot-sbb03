@@ -26,6 +26,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -87,7 +90,10 @@ class QuestionControllerTest {
         QuestionDto questionDto2 = QuestionDto.fromQuestion(question2);
 
         List<QuestionDto> questions = List.of(questionDto1, questionDto2);
-        when(questionService.getAllQuestions()).thenReturn(questions);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Page<QuestionDto> questionPage = new PageImpl<>(questions, pageRequest, questions.size());
+
+        when(questionService.getAllQuestions(1)).thenReturn(questionPage);
 
         //when
         ResultActions resultActions = mockMvc.perform(get(url));
@@ -95,14 +101,22 @@ class QuestionControllerTest {
         //then
         resultActions
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(2))
-            .andExpect(jsonPath("$[0].id").value(question1.getId()))
-            .andExpect(jsonPath("$[0].category.name").value(category.getName()))
-            .andExpect(jsonPath("$[0].subject").value(question1.getSubject()))
-            .andExpect(jsonPath("$[0].content").value(question1.getContent()))
-            .andExpect(jsonPath("$[1].subject").value(question2.getSubject()))
-            .andExpect(jsonPath("$[1].content").value(question2.getContent()));
+            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.totalPages").value(1))
+            .andExpect(jsonPath("$.number").value(0)) // Current page
+            .andExpect(jsonPath("$.size").value(10)) // Page size
 
+            .andExpect(jsonPath("$.content[0].id").value(questionDto1.getId()))
+            .andExpect(jsonPath("$.content[0].category.id").value(category.getId()))
+            .andExpect(jsonPath("$.content[0].category.name").value(category.getName()))
+            .andExpect(jsonPath("$.content[0].subject").value(questionDto1.getSubject()))
+            .andExpect(jsonPath("$.content[0].content").value(questionDto1.getContent()))
+
+            .andExpect(jsonPath("$.content[1].id").value(questionDto2.getId()))
+            .andExpect(jsonPath("$.content[1].category.id").value(category.getId()))
+            .andExpect(jsonPath("$.content[1].category.name").value(category.getName()))
+            .andExpect(jsonPath("$.content[1].subject").value(questionDto2.getSubject()))
+            .andExpect(jsonPath("$.content[1].content").value(questionDto2.getContent()));
     }
 
     @Test
