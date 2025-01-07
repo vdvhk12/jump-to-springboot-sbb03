@@ -3,6 +3,7 @@ package org.example.backend.domain.answer.controller;
 import static org.example.backend.domain.util.AnswerUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -82,5 +83,20 @@ class AnswerControllerTest {
             .andExpect(jsonPath("$.id").value(updatedAnswer.getId()))
             .andExpect(jsonPath("$.questionId").value(updatedAnswer.getQuestionId()))
             .andExpect(jsonPath("$.content").value(updatedAnswer.getContent()));
+    }
+
+    @Test
+    @DisplayName("DELETE /api/answer/{id}")
+    void t3() throws Exception {
+        //given
+        String url = "/api/answer/1";
+        AnswerForm answerForm = createTestAnswerForm(1L, "content");
+        Answer answer = createTestAnswer(1L, answerForm);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(delete(url));
+
+        //then
+        resultActions.andExpect(status().isNoContent());
     }
 }

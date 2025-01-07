@@ -57,4 +57,20 @@ class AnswerRepositoryTest {
         assertThat(result.getContent()).isEqualTo(updateForm.getContent());
         assertThat(result.getUpdatedAt()).isNotNull();
     }
+
+    @Test
+    @DisplayName("delete answer")
+    void t3() {
+        //given
+        AnswerForm answerForm = createTestAnswerForm(1L, "content");
+        Answer answer = answerRepository.save(Answer.of(answerForm));
+
+        //when
+        answerRepository.findById(answer.getId()).ifPresent(q -> answerRepository.delete(q));
+
+        //then
+        assertThatThrownBy(() -> answerRepository.findById(answer.getId())
+            .orElseThrow(() -> new DataNotFoundException("Answer not found")))
+            .isInstanceOf(DataNotFoundException.class).hasMessageContaining("Answer not found");
+    }
 }

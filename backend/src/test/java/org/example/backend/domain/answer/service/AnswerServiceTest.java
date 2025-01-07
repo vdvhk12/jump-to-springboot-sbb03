@@ -3,6 +3,8 @@ package org.example.backend.domain.answer.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.example.backend.domain.util.AnswerUtils.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -65,5 +67,20 @@ class AnswerServiceTest {
         assertThat(result.getId()).isEqualTo(answer.getId());
         assertThat(result.getQuestionId()).isEqualTo(updatedAnswer.getQuestionId());
         assertThat(result.getContent()).isEqualTo(updatedAnswer.getContent());
+    }
+
+    @Test
+    @DisplayName("delete answer")
+    void t3() {
+        //given
+        AnswerForm answerForm = createTestAnswerForm(1L, "content");
+        Answer answer = createTestAnswer(1L, answerForm);
+        when(answerRepository.findById(any(Long.class))).thenReturn(Optional.of(answer));
+
+        //when
+        answerService.deleteAnswer(answer.getId());
+
+        //then
+        verify(answerRepository, times(1)).delete(any(Answer.class));
     }
 }
