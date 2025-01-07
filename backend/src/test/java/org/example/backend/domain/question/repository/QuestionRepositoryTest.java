@@ -5,6 +5,7 @@ import static org.example.backend.domain.util.CategoryUtils.*;
 import static org.example.backend.domain.util.QuestionUtils.createTestQuestionForm;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.form.CategoryForm;
 import org.example.backend.domain.category.repository.CategoryRepository;
@@ -44,8 +45,58 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("question update")
+    @DisplayName("get questions")
     void t2() {
+        //given
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        Category category = categoryRepository.save(Category.of(categoryForm));
+
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        questionRepository.save(Question.of(questionForm, category));
+        questionRepository.save(Question.of(questionForm, category));
+
+        //when
+        List<Question> result = questionRepository.findAll();
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result.getFirst().getCategory()).isInstanceOf(Category.class);
+        assertThat(result.getFirst().getCategory().getName()).isEqualTo(category.getName());
+        assertThat(result.getFirst().getSubject()).isEqualTo(questionForm.getSubject());
+        assertThat(result.getFirst().getContent()).isEqualTo(questionForm.getContent());
+
+        assertThat(result.getLast().getCategory()).isInstanceOf(Category.class);
+        assertThat(result.getLast().getCategory().getName()).isEqualTo(category.getName());
+        assertThat(result.getLast().getSubject()).isEqualTo(questionForm.getSubject());
+        assertThat(result.getLast().getContent()).isEqualTo(questionForm.getContent());
+    }
+
+    @Test
+    @DisplayName("get question")
+    void t3() {
+        //given
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        Category category = categoryRepository.save(Category.of(categoryForm));
+
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        Question question = questionRepository.save(Question.of(questionForm, category));
+
+        //when
+        Question result = questionRepository.findById(question.getId())
+            .orElseThrow(() -> new DataNotFoundException("Question not found"));
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getCategory()).isInstanceOf(Category.class);
+        assertThat(result.getCategory().getName()).isEqualTo(category.getName());
+        assertThat(result.getSubject()).isEqualTo(questionForm.getSubject());
+        assertThat(result.getContent()).isEqualTo(questionForm.getContent());
+    }
+
+    @Test
+    @DisplayName("question update")
+    void t4() {
         //given
         CategoryForm categoryForm = createTestCategoryForm("category");
         Category category = categoryRepository.save(Category.of(categoryForm));
@@ -71,7 +122,7 @@ class QuestionRepositoryTest {
 
     @Test
     @DisplayName("question delete")
-    void t3() {
+    void t5() {
         //given
         CategoryForm categoryForm = createTestCategoryForm("category");
         Category category = categoryRepository.save(Category.of(categoryForm));
