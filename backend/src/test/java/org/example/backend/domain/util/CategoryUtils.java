@@ -12,9 +12,9 @@ public class CategoryUtils {
         return form;
     }
 
-    public static Category createTestCategory(Long questionId, CategoryForm categoryForm) {
+    public static Category createTestCategory(Long categoryId, CategoryForm categoryForm) {
         return Category.builder()
-            .id(questionId)
+            .id(categoryId)
             .name(categoryForm.getName())
             .build();
     }
