@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.backend.domain.category.dto.CategoryDto;
 import org.example.backend.domain.category.form.CategoryForm;
 
 @Entity
@@ -35,6 +36,13 @@ public class Category {
         return Category.builder()
             .name(categoryForm.getName())
             .createdAt(LocalDateTime.now())
+            .build();
+    }
+
+    public static Category fromDto(CategoryDto categoryDto) {
+        return Category.builder()
+            .id(categoryDto.getId())
+            .name(categoryDto.getName())
             .build();
     }
 }

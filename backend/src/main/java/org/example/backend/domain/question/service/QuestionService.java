@@ -2,6 +2,8 @@ package org.example.backend.domain.question.service;
 
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.example.backend.domain.category.entity.Category;
+import org.example.backend.domain.category.service.CategoryService;
 import org.example.backend.domain.question.dto.QuestionDto;
 import org.example.backend.domain.question.entity.Question;
 import org.example.backend.domain.question.form.QuestionForm;
@@ -14,14 +16,18 @@ import org.springframework.stereotype.Service;
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final CategoryService categoryService;
 
     public QuestionDto createQuestion(QuestionForm questionForm) {
-        return QuestionDto.fromQuestion(questionRepository.save(Question.of(questionForm)));
+        Category category = Category.fromDto(categoryService.getCategory(questionForm.getCategoryId()));
+        return QuestionDto.fromQuestion(questionRepository.save(Question.of(questionForm, category)));
     }
 
     public QuestionDto updateQuestion(Long questionId, QuestionForm questionForm) {
+        Category category = Category.fromDto(categoryService.getCategory(questionForm.getCategoryId()));
         Question question = getQuestionOrThrow(questionId);
         return QuestionDto.fromQuestion(questionRepository.save(question.toBuilder()
+            .category(category)
             .subject(questionForm.getSubject())
             .content(questionForm.getContent())
             .updatedAt(LocalDateTime.now())

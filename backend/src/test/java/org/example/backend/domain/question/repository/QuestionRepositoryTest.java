@@ -1,9 +1,13 @@
 package org.example.backend.domain.question.repository;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.example.backend.domain.util.CategoryUtils.*;
 import static org.example.backend.domain.util.QuestionUtils.createTestQuestionForm;
 
 import java.time.LocalDateTime;
+import org.example.backend.domain.category.entity.Category;
+import org.example.backend.domain.category.form.CategoryForm;
+import org.example.backend.domain.category.repository.CategoryRepository;
 import org.example.backend.domain.question.entity.Question;
 import org.example.backend.domain.question.form.QuestionForm;
 import org.example.backend.global.exception.DataNotFoundException;
@@ -18,14 +22,20 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Test
     @DisplayName("question create")
     void t1() {
         //given
-        QuestionForm questionForm = createTestQuestionForm("test subject", "test content");
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        Category category = categoryRepository.save(Category.of(categoryForm));
+
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
 
         //when
-        Question result = questionRepository.save(Question.of(questionForm));
+        Question result = questionRepository.save(Question.of(questionForm, category));
 
         //then
         assertThat(result).isNotNull();
@@ -37,9 +47,12 @@ class QuestionRepositoryTest {
     @DisplayName("question update")
     void t2() {
         //given
-        QuestionForm createForm = createTestQuestionForm("test subject", "test content");
-        QuestionForm updateForm = createTestQuestionForm("update subject", "update content");
-        Question question = questionRepository.save(Question.of(createForm));
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        Category category = categoryRepository.save(Category.of(categoryForm));
+
+        QuestionForm createForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm updateForm = createTestQuestionForm(category.getId(), "update subject", "update content");
+        Question question = questionRepository.save(Question.of(createForm, category));
 
         //when
         Question result = questionRepository.findById(question.getId()).map(q -> q.toBuilder()
@@ -60,8 +73,11 @@ class QuestionRepositoryTest {
     @DisplayName("question delete")
     void t3() {
         //given
-        QuestionForm createForm = createTestQuestionForm("test subject", "test content");
-        Question question = questionRepository.save(Question.of(createForm));
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        Category category = categoryRepository.save(Category.of(categoryForm));
+
+        QuestionForm createForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        Question question = questionRepository.save(Question.of(createForm, category));
 
         //when
         questionRepository.findById(question.getId()).ifPresent(q -> questionRepository.delete(q));

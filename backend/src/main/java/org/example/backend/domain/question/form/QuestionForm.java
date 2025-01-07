@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class QuestionForm {
 
+    private Long categoryId;
     private String subject;
     private String content;
 }

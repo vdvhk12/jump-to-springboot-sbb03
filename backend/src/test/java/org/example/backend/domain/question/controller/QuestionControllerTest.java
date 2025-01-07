@@ -1,5 +1,7 @@
 package org.example.backend.domain.question.controller;
 
+import static org.example.backend.domain.util.CategoryUtils.createTestCategory;
+import static org.example.backend.domain.util.CategoryUtils.createTestCategoryForm;
 import static org.example.backend.domain.util.QuestionUtils.createTestQuestion;
 import static org.example.backend.domain.util.QuestionUtils.createTestQuestionForm;
 import static org.example.backend.domain.util.QuestionUtils.updateTestQuestion;
@@ -12,6 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.backend.domain.category.entity.Category;
+import org.example.backend.domain.category.form.CategoryForm;
 import org.example.backend.domain.question.dto.QuestionDto;
 import org.example.backend.domain.question.entity.Question;
 import org.example.backend.domain.question.form.QuestionForm;
@@ -42,8 +46,11 @@ class QuestionControllerTest {
     void createQuestion() throws Exception {
         //given
         String url = "/api/question/create";
-        QuestionForm questionForm = createTestQuestionForm("test subject", "test content");
-        Question question = createTestQuestion(1L, questionForm);
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        Category category = createTestCategory(1L, categoryForm);
+
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        Question question = createTestQuestion(1L, questionForm, category);
         QuestionDto questionDto = QuestionDto.fromQuestion(question);
 
         when(questionService.createQuestion(any(QuestionForm.class))).thenReturn(questionDto);
@@ -66,11 +73,14 @@ class QuestionControllerTest {
     void updateQuestion() throws Exception {
         //given
         String url = "/api/question/1";
-        QuestionForm questionForm = createTestQuestionForm("test subject", "test content");
-        QuestionForm updateForm = createTestQuestionForm("update subject", "update content");
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        Category category = createTestCategory(1L, categoryForm);
 
-        Question question = createTestQuestion(1L, questionForm);
-        Question updateQuestion = updateTestQuestion(question, updateForm);
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm updateForm = createTestQuestionForm(category.getId(), "update subject", "update content");
+
+        Question question = createTestQuestion(1L, questionForm, category);
+        Question updateQuestion = updateTestQuestion(question, updateForm, category);
 
         QuestionDto questionDto = QuestionDto.fromQuestion(updateQuestion);
 
@@ -94,8 +104,11 @@ class QuestionControllerTest {
     void deleteQuestion() throws Exception {
         //given
         String url = "/api/question/1";
-        QuestionForm questionForm = createTestQuestionForm("test subject", "test content");
-        createTestQuestion(1L, questionForm);
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        Category category = createTestCategory(1L, categoryForm);
+
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        createTestQuestion(1L, questionForm, category);
 
         //when
         ResultActions resultActions = mockMvc.perform(delete(url));

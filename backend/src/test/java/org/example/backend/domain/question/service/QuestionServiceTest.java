@@ -1,7 +1,7 @@
 package org.example.backend.domain.question.service;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.example.backend.domain.util.CategoryUtils.*;
 import static org.example.backend.domain.util.QuestionUtils.createTestQuestion;
 import static org.example.backend.domain.util.QuestionUtils.createTestQuestionForm;
 import static org.example.backend.domain.util.QuestionUtils.updateTestQuestion;
@@ -11,6 +11,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import org.example.backend.domain.category.dto.CategoryDto;
+import org.example.backend.domain.category.entity.Category;
+import org.example.backend.domain.category.form.CategoryForm;
+import org.example.backend.domain.category.service.CategoryService;
 import org.example.backend.domain.question.dto.QuestionDto;
 import org.example.backend.domain.question.entity.Question;
 import org.example.backend.domain.question.form.QuestionForm;
@@ -28,6 +32,9 @@ class QuestionServiceTest {
     @Mock
     private QuestionRepository questionRepository;
 
+    @Mock
+    private CategoryService categoryService;
+
     @InjectMocks
     private QuestionService questionService;
 
@@ -35,9 +42,12 @@ class QuestionServiceTest {
     @DisplayName("question create")
     void t1() {
         //given
-        QuestionForm questionForm = createTestQuestionForm("test subject", "test content");
-        Question question = createTestQuestion(1L, questionForm);
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        CategoryDto category = CategoryDto.fromCategory(createTestCategory(1L, categoryForm));
+        when(categoryService.getCategory(any(Long.class))).thenReturn(category);
 
+        QuestionForm questionForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        Question question = createTestQuestion(1L, questionForm, Category.fromDto(category));
         when(questionRepository.save(any(Question.class))).thenReturn(question);
 
         //when
@@ -54,11 +64,16 @@ class QuestionServiceTest {
     @DisplayName("question update")
     void t2() {
         //given
-        QuestionForm createForm = createTestQuestionForm("test subject", "test content");
-        QuestionForm updateForm = createTestQuestionForm("update subject", "update content");
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        CategoryDto category = CategoryDto.fromCategory(createTestCategory(1L, categoryForm));
+        when(categoryService.getCategory(any(Long.class))).thenReturn(category);
 
-        Question question = createTestQuestion(1L, createForm);
-        Question updateQuestion = updateTestQuestion(question, updateForm);
+
+        QuestionForm createForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        QuestionForm updateForm = createTestQuestionForm(category.getId(), "update subject", "update content");
+
+        Question question = createTestQuestion(1L, createForm, Category.fromDto(category));
+        Question updateQuestion = updateTestQuestion(question, updateForm, Category.fromDto(category));
 
         when(questionRepository.findById(any(Long.class))).thenReturn(Optional.of(question));
         when(questionRepository.save(any(Question.class))).thenReturn(updateQuestion);
@@ -78,8 +93,11 @@ class QuestionServiceTest {
     @DisplayName("question delete")
     void t3() {
         //given
-        QuestionForm createForm = createTestQuestionForm("test subject", "test content");
-        Question question = createTestQuestion(1L, createForm);
+        CategoryForm categoryForm = createTestCategoryForm("category");
+        Category category = createTestCategory(1L, categoryForm);
+
+        QuestionForm createForm = createTestQuestionForm(category.getId(), "test subject", "test content");
+        Question question = createTestQuestion(1L, createForm, category);
 
         when(questionRepository.findById(any(Long.class))).thenReturn(Optional.of(question));
 
