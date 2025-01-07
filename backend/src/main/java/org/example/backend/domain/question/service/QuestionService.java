@@ -20,12 +20,21 @@ public class QuestionService {
     }
 
     public QuestionDto updateQuestion(Long questionId, QuestionForm questionForm) {
-        Question question = questionRepository.findById(questionId)
-            .orElseThrow(() -> new DataNotFoundException("Question not found"));
+        Question question = getQuestionOrThrow(questionId);
         return QuestionDto.fromQuestion(questionRepository.save(question.toBuilder()
             .subject(questionForm.getSubject())
             .content(questionForm.getContent())
             .updatedAt(LocalDateTime.now())
             .build()));
+    }
+
+    public void deleteQuestion(Long questionId) {
+        Question question = getQuestionOrThrow(questionId);
+        questionRepository.delete(question);
+    }
+
+    private Question getQuestionOrThrow(Long questionId) {
+        return questionRepository.findById(questionId)
+            .orElseThrow(() -> new DataNotFoundException("Question not found"));
     }
 }

@@ -6,6 +6,8 @@ import static org.example.backend.domain.question.util.QuestionUtils.createTestQ
 import static org.example.backend.domain.question.util.QuestionUtils.createTestQuestionForm;
 import static org.example.backend.domain.question.util.QuestionUtils.updateTestQuestion;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -62,7 +64,7 @@ class QuestionServiceTest {
         when(questionRepository.save(any(Question.class))).thenReturn(updateQuestion);
 
         //when
-        QuestionDto result = questionService.updateQuestion(1L, updateForm);
+        QuestionDto result = questionService.updateQuestion(question.getId(), updateForm);
 
         //then
         assertThat(result).isNotNull();
@@ -70,5 +72,21 @@ class QuestionServiceTest {
         assertThat(result.getSubject()).isEqualTo(updateForm.getSubject());
         assertThat(result.getContent()).isEqualTo(updateForm.getContent());
         assertThat(result.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("question delete")
+    void t3() {
+        //given
+        QuestionForm createForm = createTestQuestionForm("test subject", "test content");
+        Question question = createTestQuestion(1L, createForm);
+
+        when(questionRepository.findById(any(Long.class))).thenReturn(Optional.of(question));
+
+        //when
+        questionService.deleteQuestion(question.getId());
+
+        //then
+        verify(questionRepository, times(1)).delete(question);
     }
 }
