@@ -1,4 +1,4 @@
-package org.example.backend.domain.question.util;
+package org.example.backend.domain.util;
 
 import java.time.LocalDateTime;
 import org.example.backend.domain.question.entity.Question;

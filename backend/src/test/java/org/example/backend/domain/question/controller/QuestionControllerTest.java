@@ -1,6 +1,8 @@
 package org.example.backend.domain.question.controller;
 
-import static org.example.backend.domain.question.util.QuestionUtils.*;
+import static org.example.backend.domain.util.QuestionUtils.createTestQuestion;
+import static org.example.backend.domain.util.QuestionUtils.createTestQuestionForm;
+import static org.example.backend.domain.util.QuestionUtils.updateTestQuestion;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;

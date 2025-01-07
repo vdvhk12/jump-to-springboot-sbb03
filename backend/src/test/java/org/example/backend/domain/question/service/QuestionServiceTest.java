@@ -2,9 +2,9 @@ package org.example.backend.domain.question.service;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.example.backend.domain.question.util.QuestionUtils.createTestQuestion;
-import static org.example.backend.domain.question.util.QuestionUtils.createTestQuestionForm;
-import static org.example.backend.domain.question.util.QuestionUtils.updateTestQuestion;
+import static org.example.backend.domain.util.QuestionUtils.createTestQuestion;
+import static org.example.backend.domain.util.QuestionUtils.createTestQuestionForm;
+import static org.example.backend.domain.util.QuestionUtils.updateTestQuestion;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

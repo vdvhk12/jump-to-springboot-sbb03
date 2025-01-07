@@ -1,7 +1,7 @@
 package org.example.backend.domain.question.repository;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.example.backend.domain.question.util.QuestionUtils.*;
+import static org.example.backend.domain.util.QuestionUtils.createTestQuestionForm;
 
 import java.time.LocalDateTime;
 import org.example.backend.domain.question.entity.Question;
