@@ -30,4 +30,18 @@ class CategoryRepositoryTest {
         assertThat(result.getName()).isEqualTo(categoryFrom.getName());
     }
 
+    @Test
+    @DisplayName("category update")
+    void t2() {
+        //given
+        CategoryForm categoryFrom = createTestCategoryForm("test category1");
+
+        //when
+        Category result = categoryRepository.save(Category.of(categoryFrom));
+
+        //then
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getName()).isEqualTo(categoryFrom.getName());
+    }
+
 }

@@ -5,6 +5,7 @@ import static org.example.backend.domain.util.CategoryUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import org.example.backend.domain.category.dto.CategoryDto;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.form.CategoryForm;
@@ -26,7 +27,7 @@ class CategoryServiceTest {
     private CategoryService categoryService;
 
     @Test
-    @DisplayName("create category")
+    @DisplayName("category create")
     void t1() {
         //given
         CategoryForm categoryForm = createTestCategoryForm("category1");
@@ -41,6 +42,27 @@ class CategoryServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(category.getId());
         assertThat(result.getName()).isEqualTo(category.getName());
+    }
+
+    @Test
+    @DisplayName("category update")
+    void t2() {
+        //given
+        CategoryForm createForm = createTestCategoryForm("category1");
+        CategoryForm updateForm = createTestCategoryForm("updateCategory1");
+
+        Category category = createTestCategory(1L, createForm);
+        Category updateCategory = updateTestCategory(category, updateForm);
+
+        when(categoryRepository.findById(any(Long.class))).thenReturn(Optional.of(category));
+        when(categoryRepository.save(any(Category.class))).thenReturn(updateCategory);
+
+        //when
+        CategoryDto result = categoryService.updateCategory(category.getId(), createForm);
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getName()).isEqualTo(updateForm.getName());
     }
 
 }

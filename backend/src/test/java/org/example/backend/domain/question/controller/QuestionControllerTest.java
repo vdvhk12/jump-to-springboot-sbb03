@@ -62,7 +62,7 @@ class QuestionControllerTest {
     }
 
     @Test
-    @DisplayName("Patch /api/question/{id}")
+    @DisplayName("PATCH /api/question/{id}")
     void updateQuestion() throws Exception {
         //given
         String url = "/api/question/1";
@@ -95,7 +95,7 @@ class QuestionControllerTest {
         //given
         String url = "/api/question/1";
         QuestionForm questionForm = createTestQuestionForm("test subject", "test content");
-        Question question = createTestQuestion(1L, questionForm);
+        createTestQuestion(1L, questionForm);
 
         //when
         ResultActions resultActions = mockMvc.perform(delete(url));

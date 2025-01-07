@@ -3,6 +3,7 @@ package org.example.backend.domain.category.controller;
 import static org.example.backend.domain.util.CategoryUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,6 +53,33 @@ class CategoryControllerTest {
         //then
         resultActions
             .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(categoryDto.getId()))
+            .andExpect(jsonPath("$.name").value(categoryDto.getName()));
+    }
+
+    @Test
+    @DisplayName("PATCH /api/category/{id}")
+    void t2() throws Exception {
+        //given
+        String url = "/api/category/1";
+        CategoryForm categoryForm = createTestCategoryForm("category1");
+        CategoryForm updateForm = createTestCategoryForm("updateCategory1");
+
+        Category category = createTestCategory(1L, categoryForm);
+        Category updateCategory = updateTestCategory(category, updateForm);
+
+        CategoryDto categoryDto = CategoryDto.fromCategory(updateCategory);
+
+        when(categoryService.updateCategory(any(Long.class), any(CategoryForm.class))).thenReturn(categoryDto);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(patch(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(categoryForm)));
+
+        //then
+        resultActions
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(categoryDto.getId()))
             .andExpect(jsonPath("$.name").value(categoryDto.getName()));
     }
