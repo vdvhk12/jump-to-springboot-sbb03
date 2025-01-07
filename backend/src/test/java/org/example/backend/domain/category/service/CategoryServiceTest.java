@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 import org.example.backend.domain.category.dto.CategoryDto;
 import org.example.backend.domain.category.entity.Category;
@@ -81,6 +82,32 @@ class CategoryServiceTest {
 
         //then
         verify(categoryRepository, times(1)).delete(category);
+    }
+
+    @Test
+    @DisplayName("get all categories")
+    void t4() {
+        //given
+        CategoryForm categoryFrom = createTestCategoryForm("test category1");
+        CategoryForm categoryFrom2 = createTestCategoryForm("test category2");
+
+        Category category = createTestCategory(1L, categoryFrom);
+        Category category2 = createTestCategory(2L, categoryFrom2);
+
+        List<Category> categories = List.of(category, category2);
+
+        when(categoryRepository.findAll()).thenReturn(categories);
+
+        //when
+        List<CategoryDto> result = categoryService.getAllCategories();
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result.get(0).getName()).isEqualTo(category.getName());
+        assertThat(result.get(0)).isInstanceOf(CategoryDto.class);
+        assertThat(result.get(1).getName()).isEqualTo(category2.getName());
+        assertThat(result.get(1)).isInstanceOf(CategoryDto.class);
     }
 
 }

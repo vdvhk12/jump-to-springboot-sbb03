@@ -1,6 +1,7 @@
 package org.example.backend.domain.category.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.domain.category.dto.CategoryDto;
 import org.example.backend.domain.category.entity.Category;
@@ -17,6 +18,10 @@ public class CategoryService {
 
     public CategoryDto createCategory(CategoryForm categoryForm) {
         return CategoryDto.fromCategory(categoryRepository.save(Category.of(categoryForm)));
+    }
+
+    public List<CategoryDto> getAllCategories() {
+        return categoryRepository.findAll().stream().map(CategoryDto::fromCategory).toList();
     }
 
     public CategoryDto updateCategory(Long categoryId, CategoryForm categoryForm) {
