@@ -132,7 +132,7 @@ class QuestionControllerTest {
         Question question = createTestQuestion(1L, questionForm, category);
 
         QuestionDetailDto questionDetailDto = QuestionDetailDto.fromEntity(question);
-        when(questionService.getQuestion(questionDetailDto.getId())).thenReturn(questionDetailDto);
+        when(questionService.getQuestion(questionDetailDto.getId(), 1, "")).thenReturn(questionDetailDto);
 
         //when
         ResultActions resultActions = mockMvc.perform(get(url));

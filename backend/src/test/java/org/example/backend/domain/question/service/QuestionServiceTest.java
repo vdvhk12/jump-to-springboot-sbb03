@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import org.example.backend.domain.answer.service.AnswerService;
 import org.example.backend.domain.category.dto.CategoryDto;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.form.CategoryForm;
@@ -42,6 +43,9 @@ class QuestionServiceTest {
 
     @Mock
     private CategoryService categoryService;
+
+    @Mock
+    private AnswerService answerService;
 
     @InjectMocks
     private QuestionService questionService;
@@ -123,7 +127,7 @@ class QuestionServiceTest {
         when(questionRepository.findById(any(Long.class))).thenReturn(Optional.of(question));
 
         //when
-        QuestionDetailDto result = questionService.getQuestion(question.getId());
+        QuestionDetailDto result = questionService.getQuestion(question.getId(), 1, "");
 
         //then
         assertThat(result).isNotNull();

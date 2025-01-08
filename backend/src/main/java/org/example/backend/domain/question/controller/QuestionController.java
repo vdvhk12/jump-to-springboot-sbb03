@@ -39,8 +39,11 @@ public class QuestionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuestionDetailDto> getQuestion(@PathVariable Long id) {
-        QuestionDetailDto questionDetailDto = questionService.getQuestion(id);
+    public ResponseEntity<QuestionDetailDto> getQuestion(@PathVariable Long id,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "sort", defaultValue = "") String sort) {
+
+        QuestionDetailDto questionDetailDto = questionService.getQuestion(id, page, sort);
         return ResponseEntity.status(HttpStatus.OK).body(questionDetailDto);
     }
 

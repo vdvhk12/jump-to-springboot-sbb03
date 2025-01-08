@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.backend.domain.answer.dto.AnswerDto;
+import org.example.backend.domain.answer.service.AnswerService;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.service.CategoryService;
 import org.example.backend.domain.question.dto.QuestionDetailDto;
@@ -25,6 +27,7 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final CategoryService categoryService;
+    private final AnswerService answerService;
 
     public QuestionDetailDto createQuestion(QuestionForm questionForm) {
         Category category = Category.fromDto(categoryService.getCategory(questionForm.getCategoryId()));
@@ -38,8 +41,9 @@ public class QuestionService {
         return questionRepository.findAll(pageable).map(QuestionListDto::fromEntity);
     }
 
-    public QuestionDetailDto getQuestion(Long questionId) {
-        return QuestionDetailDto.fromEntity(getQuestionOrThrow(questionId));
+    public QuestionDetailDto getQuestion(Long questionId, int page, String sort) {
+        Page<AnswerDto> answerPage = answerService.getAnswerPage(questionId, page, sort);
+        return QuestionDetailDto.fromEntityAndAnswerPage(getQuestionOrThrow(questionId), answerPage);
     }
 
     public QuestionDetailDto updateQuestion(Long questionId, QuestionForm questionForm) {
