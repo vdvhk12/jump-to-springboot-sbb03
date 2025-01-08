@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.domain.answer.dto.AnswerDto;
-import org.example.backend.domain.answer.service.AnswerService;
+import org.example.backend.domain.answer.service.AnswerPagingService;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.service.CategoryService;
 import org.example.backend.domain.question.dto.QuestionDetailDto;
@@ -27,7 +27,7 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final CategoryService categoryService;
-    private final AnswerService answerService;
+    private final AnswerPagingService answerPagingService;
 
     public QuestionDetailDto createQuestion(QuestionForm questionForm) {
         Category category = Category.fromDto(categoryService.getCategory(questionForm.getCategoryId()));
@@ -42,7 +42,7 @@ public class QuestionService {
     }
 
     public QuestionDetailDto getQuestion(Long questionId, int page, String sort) {
-        Page<AnswerDto> answerPage = answerService.getAnswerPage(questionId, page, sort);
+        Page<AnswerDto> answerPage = answerPagingService.getAnswerPage(questionId, page, sort);
         return QuestionDetailDto.fromEntityAndAnswerPage(getQuestionOrThrow(questionId), answerPage);
     }
 
@@ -62,7 +62,7 @@ public class QuestionService {
         questionRepository.delete(question);
     }
 
-    private Question getQuestionOrThrow(Long questionId) {
+    public Question getQuestionOrThrow(Long questionId) {
         return questionRepository.findById(questionId)
             .orElseThrow(() -> new DataNotFoundException("Question not found"));
     }

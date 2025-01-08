@@ -12,7 +12,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
-import org.example.backend.domain.answer.service.AnswerService;
+import org.example.backend.domain.answer.dto.AnswerDto;
+import org.example.backend.domain.answer.service.AnswerPagingService;
 import org.example.backend.domain.category.dto.CategoryDto;
 import org.example.backend.domain.category.entity.Category;
 import org.example.backend.domain.category.form.CategoryForm;
@@ -45,7 +46,7 @@ class QuestionServiceTest {
     private CategoryService categoryService;
 
     @Mock
-    private AnswerService answerService;
+    private AnswerPagingService answerPagingService;
 
     @InjectMocks
     private QuestionService questionService;
@@ -123,6 +124,12 @@ class QuestionServiceTest {
 
         QuestionForm questionForm = createTestQuestionForm(category.getId(), "subject", "content");
         Question question = createTestQuestion(1L, questionForm, Category.fromDto(category));
+
+        List<AnswerDto> answers = List.of();
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Direction.DESC, "createdAt"));
+        Page<AnswerDto> answerPage = new PageImpl<>(answers, pageable, 0);
+        when(answerPagingService.getAnswerPage(any(Long.class), any(int.class), any(String.class)))
+            .thenReturn(answerPage);
 
         when(questionRepository.findById(any(Long.class))).thenReturn(Optional.of(question));
 

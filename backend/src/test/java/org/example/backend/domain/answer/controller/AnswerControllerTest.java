@@ -1,6 +1,8 @@
 package org.example.backend.domain.answer.controller;
 
 import static org.example.backend.domain.util.AnswerUtils.*;
+import static org.example.backend.domain.util.CategoryUtils.*;
+import static org.example.backend.domain.util.QuestionUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -14,6 +16,8 @@ import org.example.backend.domain.answer.dto.AnswerDto;
 import org.example.backend.domain.answer.entity.Answer;
 import org.example.backend.domain.answer.form.AnswerForm;
 import org.example.backend.domain.answer.service.AnswerService;
+import org.example.backend.domain.category.entity.Category;
+import org.example.backend.domain.question.entity.Question;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +44,13 @@ class AnswerControllerTest {
     void t1() throws Exception {
         //given
         String url = "/api/answer/create";
+
+        Category category = createTestCategory(1L, createTestCategoryForm("category"));
+        Question question = createTestQuestion(1L,
+            createTestQuestionForm(1L, "subject, ", "content"), category);
+
         AnswerForm answerForm = createTestAnswerForm(1L, "content");
-        Answer answer = createTestAnswer(1L, answerForm);
+        Answer answer = createTestAnswer(question, 1L, answerForm);
         AnswerDto answerDto = AnswerDto.fromEntity(answer);
         when(answerService.createAnswer(any(AnswerForm.class))).thenReturn(answerDto);
 
@@ -54,7 +63,7 @@ class AnswerControllerTest {
         resultActions
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").value(answer.getId()))
-            .andExpect(jsonPath("$.questionId").value(answer.getQuestionId()))
+            .andExpect(jsonPath("$.question.id").value(answer.getQuestion().getId()))
             .andExpect(jsonPath("$.content").value(answer.getContent()));
     }
 
@@ -63,10 +72,15 @@ class AnswerControllerTest {
     void t2() throws Exception {
         //given
         String url = "/api/answer/1";
+
+        Category category = createTestCategory(1L, createTestCategoryForm("category"));
+        Question question = createTestQuestion(1L,
+            createTestQuestionForm(1L, "subject, ", "content"), category);
+
         AnswerForm answerForm = createTestAnswerForm(1L, "content");
         AnswerForm updateForm = createTestAnswerForm(1L, "updated content");
 
-        Answer answer = createTestAnswer(1L, answerForm);
+        Answer answer = createTestAnswer(question, 1L, answerForm);
         Answer updatedAnswer = updateTestAnswer(answer, updateForm);
 
         AnswerDto answerDto = AnswerDto.fromEntity(updatedAnswer);
@@ -81,7 +95,7 @@ class AnswerControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(updatedAnswer.getId()))
-            .andExpect(jsonPath("$.questionId").value(updatedAnswer.getQuestionId()))
+            .andExpect(jsonPath("$.question.id").value(updatedAnswer.getQuestion().getId()))
             .andExpect(jsonPath("$.content").value(updatedAnswer.getContent()));
     }
 
@@ -90,8 +104,13 @@ class AnswerControllerTest {
     void t3() throws Exception {
         //given
         String url = "/api/answer/1";
+
+        Category category = createTestCategory(1L, createTestCategoryForm("category"));
+        Question question = createTestQuestion(1L,
+            createTestQuestionForm(1L, "subject, ", "content"), category);
+
         AnswerForm answerForm = createTestAnswerForm(1L, "content");
-        Answer answer = createTestAnswer(1L, answerForm);
+        Answer answer = createTestAnswer(question, 1L, answerForm);
 
         //when
         ResultActions resultActions = mockMvc.perform(delete(url));

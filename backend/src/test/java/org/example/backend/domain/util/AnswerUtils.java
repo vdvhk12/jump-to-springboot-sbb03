@@ -3,6 +3,7 @@ package org.example.backend.domain.util;
 import java.time.LocalDateTime;
 import org.example.backend.domain.answer.entity.Answer;
 import org.example.backend.domain.answer.form.AnswerForm;
+import org.example.backend.domain.question.entity.Question;
 
 public class AnswerUtils {
 
@@ -13,10 +14,10 @@ public class AnswerUtils {
         return answerForm;
     }
 
-    public static Answer createTestAnswer(Long answerId, AnswerForm answerForm) {
+    public static Answer createTestAnswer(Question question, Long answerId, AnswerForm answerForm) {
         return Answer.builder()
             .id(answerId)
-            .questionId(answerForm.getQuestionId())
+            .question(question)
             .content(answerForm.getContent())
             .createdAt(LocalDateTime.now())
             .build();
