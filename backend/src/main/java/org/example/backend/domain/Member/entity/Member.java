@@ -40,7 +40,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-    @Column(unique = true, length = 50)
+    @Column(unique = true, length = 200)
     private String refreshToken;
 
     public static Member of(MemberForm memberForm) {
